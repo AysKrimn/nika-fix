@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block baslik %} Randevu Oluşturma {% endblock baslik %}
+
+
+{% block ekOgeler %}
+
+{% endblock ekOgeler %}
+
+
+
+
+{% block site-icerigi %}
+
+<div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Randevu Olustur</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">     
+          <form id="form_1" method="post">
+            {% csrf_token %}
+          
+            {{form}}
+               
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            <button type="submit" class="btn btn-success">Onayla</button>
+          </div>
+  
+          </form>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+  
+
+<div class="row">
+
+
+    {% for reservation in reservations %}
+ 
+
+ 
+    <div class="card m-4" style="width: 45%;">
+        <img src="/urunApp/static/public/beginner.jpeg" class="card-img-top" alt="workshop">
+        <div class="card-body">
+          <h5 class="card-title">{{reservation.title}}</h5>
+          <p class="card-text">Başlangıç Seviye</p>
+          <small>Her Cumartesi | Saat: 12:00 - 15:00</small>
+          <br>
+          <span onclick="activeModal('{{reservation.id}}')" style="margin-top: 1rem;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal3">Randevu Olustur</span> 
+        </div>
+      </div>
+
+      {% endfor %}
+      
+    
+</div>
+
+
+
+<script>
+
+  function activeModal(id) {
+  console.log("gleen id:", id)
+  const form = document.getElementById('form_1')
+  const absoluteURL = `/make/randevu/${id}`
+
+  form.action = absoluteURL
+
+  console.log("form:", form)
+  
+
+  }
+</script>
+
+{% endblock site-icerigi %}
