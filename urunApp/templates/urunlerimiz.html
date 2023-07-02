@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block baslik %} Ürünlerimiz {% endblock baslik %}
+
+
+{% block ekOgeler %}
+
+<style>
+    .product-title h3{
+        margin-bottom:0;
+    }
+
+    .product-title span{
+        padding-left: 8px;
+    }
+</style>
+  
+{% endblock ekOgeler %}
+
+
+
+
+{% block site-icerigi %}
+
+<div class="container mt-5">
+
+    
+    {% if request.user.is_superuser %}
+    <div class="text-end">
+        <a href="{% url 'create-product' %}">
+        <button class="btn btn-success">+</button>
+        </a>
+    </div>
+    {% endif %}
+
+    <form action="{% url 'urunlerimiz' %}" method="get">
+        
+    <div class="input-group mb-3 mt-3">
+        <input style="margin-bottom: 0;" type="search" class="form-control" name="filtrele" placeholder="Urun Ara">
+        <button class="btn btn-outline-success" type="submit" id="button-addon2">Ara</button>
+    </div>
+    </form>
+
+      
+    <hr>
+
+
+    <div class="row">
+
+    {% for veri in data %}
+    
+    <div class="col-lg-4 mb-4">
+    <div class="card">
+        <div class="card-body">
+
+            <div class="product-title">
+
+            <div class="image-container">
+                <a href="{% url 'urun-detay-sayfasi' veri.id %}">
+                    <img src="/{{veri.resimKontrol}}" class="card-img-top responsive-img" alt="{{veri.ad}}--{{veri.id}}">
+                </a>
+                
+            </div>
+
+            <a style="text-decoration: none; color: black; padding: 1px;" href="{% url 'urun-detay-sayfasi' veri.id %}">
+                <h3 class="card-title text-center"> {{veri.adAyarla}} </h3>
+            </a>
+
+            <h5 style="margin: auto; background-color: rgb(221, 221, 221); padding: 1rem; width: fit-content;">{{veri.fiyat}} TL</h5>
+
+            </div>
+
+            
+
+
+            
+
+        </div>
+    </div>
+    </div>
+
+    {% empty %}
+    <p>Aradiginiz Urun Bulunamadi!</p>
+    {% endfor %}
+
+    </div>
+
+
+</div>
+  
+{% endblock site-icerigi %}

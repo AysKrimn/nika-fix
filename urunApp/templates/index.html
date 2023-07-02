@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block baslik %} AnaSayfa {% endblock baslik %}
+
+
+{% block ekOgeler %}
+
+<style>
+    .banner {
+        background-image: url("{% static 'public/beginner.jpeg' %}");
+        background-size: cover;
+        height: 900px;
+    }
+
+</style>
+
+{% endblock ekOgeler %}
+
+
+
+
+{% block site-icerigi %}
+
+<div class="banner"> 
+    <p>gamze</p>
+  
+</div>
+
+  
+{% endblock site-icerigi %}

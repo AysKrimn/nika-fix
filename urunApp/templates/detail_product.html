@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+
+{% block baslik %}
+  {{data.ad}}
+{% endblock baslik %}
+
+
+{% block ekOgeler %}
+<style>
+
+    .product-options a {
+        text-decoration: none;
+        display: inline-block;
+        padding: 6px;
+        color: black;
+    }
+
+    .product-showcase{
+        width: 50%;
+        margin: auto;
+    }
+
+    .product-showcase img{
+        width: 100%;
+    }
+
+    #product-owner {
+        font-size: 15px;
+        color: purple;
+        font-weight: bold;
+    }
+
+    .modal-input {
+        width: auto;
+        border: none;
+        display: inline-block;
+    }
+
+    .modal-input:focus{
+        outline: none;
+    }
+</style>
+  
+{% endblock ekOgeler %}
+
+
+{% block site-icerigi %}
+<!-- modal baslar -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Odemeyi Onaylayin</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+            {% if hasCard is True %}
+
+            <form action="{% url 'urun-satin-al' data.id %}" method="post">
+            {% csrf_token %}
+            
+            <div class="p-3">
+            <div class="text-danger">Lutfen asagidaki bilgileri onaylayin</div>
+    
+            <p>Urun: {{data.ad}}</p>
+
+            <p>
+                Satin Alma Adet:  
+                <input class="modal-input" readonly="readonly" type="text" id="modal-counter" name="urun_adet" value="{{data.stokAdet}}">                       
+            </p>
+
+            <p>Fiyat: {{data.fiyat}}</p>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                <button type="submit" class="btn btn-primary">Islemi Onayla</button>
+            </div>
+            
+            </form>
+            {% else %}
+
+            <p>Lutfen isleme devam etmeden once <a href="{% url 'user-setting' %}">Hesap Ayarlarindan</a> bir odeme metodu belirleyiniz.</p>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+                  
+            {% endif %}
+          
+        </div>
+        
+      </div>
+    </div>
+  </div>
+<!-- modal biter -->
+
+<div class="container mt-5">
+    <div class="row">
+
+        <div class="col-12">
+
+            {% for message in messages %}
+
+            <div id="alert-msg" class="alert alert-info">
+                <p>{{message}}</p>
+        
+            </div>
+              
+            {% endfor %}
+
+            <div class="row">
+
+
+                <div class="col-lg-6">
+
+                <!-- resim alani -->
+
+                <div class="product-showcase">
+                    <img src="/{{data.resimKontrol}}" alt="{{data.ad}}">
+                </div>
+                </div>
+
+                <div class="col-lg-6">
+
+                    <div class="d-flex align-items-center">
+
+                        <h3 style="margin-right: auto;">{{data.ad}}</h3>
+
+                        {% if admin or urunSahibi %}
+                          
+                        <div class="product-options">
+
+                            <a href="{% url 'urun-duzenle' data.id %}">Urunu Duzenle</a>
+                            <a class="text-danger product-delete" href="{% url 'delete-product' data.id %}">Urunu Sil</a>
+
+                        </div>
+
+                        {% endif %}
+                        
+                    </div>
+                    
+                    <hr>
+                    
+                    <p> <b>Urunun aciklamasi:</b> {{data.urundetayi}}</p>
+                    <p> <b>Tutar:</b> {{data.fiyat}} TL</p>
+                    <p> <b>Stok:</b> {{data.stokKontrol}}</p>
+                    
+                    
+                    <button id="eksilt">-</button>
+                    <input id="sayac" type="number">
+                    <button id="arttir">+</button>
+                    <button data-bs-toggle="modal" data-bs-target="#exampleModal">Satin Al</button>
+            
+                    
+                </div>
+
+
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="mt-4">
+
+        <h3>Yorumlar</h3>
+        <hr>
+
+
+        {% for yorum in data.yorumlar.all  %}
+
+        <div class="card mb-4">
+            <div class="card-header">
+
+                <div class="d-flex align-items-center">
+
+                    {% if yorum.yazar.id == data.satici.id %}
+                    <h5> <span id="product-owner">[Urun Sahibi]</span> {{yorum.yazar}} </h5>
+                    {% else %}
+                    <h5> {{yorum.yazar}} </h5>
+                    {% endif %}
+                    
+                    
+
+                    {% if request.user.id == yorum.yazar.id or admin %}
+
+                    <div class="card-options">
+                        <a class="edit" href="{% url 'yorum-duzenle' yorum.product.id yorum.id %}">Duzenle</a>
+                        <a class="delete" href="{% url 'yorum-sil' yorum.product.id yorum.id %}">Sil</a>
+                    </div>
+
+                    {% endif %}
+
+                  
+                </div>
+                
+            </div>
+            <div class="card-body">
+              <blockquote class="blockquote mb-0">
+                {{yorum.mesaj|linebreaks}}
+                <footer class="blockquote-footer mt-2"><small> {{yorum.olusturuldu}} </small></footer>
+              </blockquote>
+            </div>
+          </div>
+          
+        {% endfor %}
+        <!-- Yorum Yap -->
+        {% if request.user.is_authenticated %}
+        <div class="mt-5" style="width: 50%;">
+
+            <form action="{% url 'yorum-yap' data.id %}" method="post">
+
+                {% csrf_token %}
+
+                <textarea placeholder="Urun Hakkindaki Yorumunuz" name="message"></textarea>
+
+                <div class="mt-3">
+
+                    <button class="btn btn-primary" type="submit">Yorum Yap</button>
+                </div>
+
+            </form>
+       
+
+        </div>
+
+        {% else %}
+        <div class="text-center">
+            <p>Yorum Yapmak Icin Lutfen <a href="{% url 'user-login' %}">Giris Yapiniz</a> </p>
+        </div>
+        {% endif %}
+        
+        
+        
+    </div>
+    
+
+<script>
+
+    document.querySelectorAll('.delete').forEach(function(a) {
+        // click eventi ata
+        a.onclick = function(event) {
+            // link ogesinin varsayilan degerini al
+            event.preventDefault();
+            // onay al
+            const onay = confirm("Bu mesaji silmek istediginize emin misiniz? Bu islem bir daha geri alinamaz.")
+
+            if(onay) {
+                // endpointe istek at
+                window.location = event.target.href
+            }
+        }
+    })
+
+
+    // silme fonksiyon
+    document.querySelectorAll('.product-delete').forEach(function(a) {
+
+        // click eventi ata
+        a.onclick = function(event) {
+            
+            // link ogesinin varsayilan degerini al
+            event.preventDefault();
+            // onay al
+            const onay = confirm("Bu urunu silmek istediginize emin misiniz? Bu islem bir daha geri alinamaz.")
+
+            if(onay) {
+                // endpointe istek at
+                window.location = event.target.href
+            }
+        }
+    })
+</script>
+
+<script>
+
+const eksiltBtn = document.getElementById('eksilt')
+const arttirBtn = document.getElementById('arttir')
+const modalCounter = document.getElementById('modal-counter')
+const sayacInput = document.getElementById('sayac')
+sayacInput.value = 1
+const maxAmount = "{{data.stokAdet}}"
+// bunlara fonksiyonlar ata
+eksiltBtn.onclick = function(){
+    // 0in altina gitme
+    if(sayacInput.value <= 1) return;
+
+    // tiklandiginda bir eksilt
+    sayacInput.value -= 1
+    modalCounter.value = sayacInput.value
+}
+
+arttirBtn.onclick = function(){
+    if(sayacInput.value >= maxAmount) {
+        return alert (`Malesef bu urun icin maximum ${maxAmount} adet satin alabilirsiniz.`)
+    }
+    // 1 arttir
+    let asNumber = Number(sayacInput.value)
+    asNumber +=1
+    sayacInput.value = asNumber
+    // modaldaki veriyi guncelle
+    modalCounter.value = sayacInput.value
+}
+// inputtaki sayac
+sayacInput.onchange = function(event) {
+    // input her guncellendiginde
+    modalCounter.value = sayacInput.value
+
+    if(sayacInput.value > maxAmount) {
+        this.value = maxAmount
+        return alert (`Malesef bu urun icin maximum ${maxAmount} adet satin alabilirsiniz.`)
+        
+    }
+    // 1 arttir
+    let asNumber = Number(this.value)
+    asNumber +=1
+    this.value = asNumber
+
+    // 0in altina gitme
+    if(sayacInput.value <= 1) return;
+
+    // tiklandiginda bir eksilt
+    sayacInput.value -= 1
+    return
+    
+}
+// ODEV ARTI EKSILERI INPUTTAKI DUZENLE
+// HESAP AYARLARINDA DUZENLENIN YANINA SIL BUTONU KOY KAYITLI OLAN KART SILINSIN
+// SIFRE DEGISTIRME
+</script>
+
+<script>
+    setTimeout(() => {
+    
+        const div = document.getElementById('alert-msg');
+        if(div) div.remove()
+    }, 5000);
+</script>
+</div>
+  
+{% endblock site-icerigi %}

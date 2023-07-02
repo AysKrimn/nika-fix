@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block ekOgeler %}
+
+<style>
+  .form-area {
+    width: 50%;
+    margin: auto;
+  }
+
+  .submitBtn button { width: 100%; }
+</style>
+  
+{% endblock ekOgeler %}
+
+{% block site-icerigi %}
+
+<div class="container mt-5">
+
+<div class="form-area">
+    <form action="{% url 'create-product' %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      {{form}}
+          
+      <div class="submitBtn">
+        <button class="btn btn-success">Olustur</button>
+      </div>
+    </form>
+</div>
+
+</div>  
+
+
+<script>
+
+// butun inputlari sec
+const inputs = document.querySelectorAll('form input, textarea') // nodelist
+inputs.forEach(function(input) {
+// inputlara class ver
+input.classList.add('form-control')
+
+})
+
+</script>
+  
+{% endblock site-icerigi %}

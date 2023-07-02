@@ -1,0 +1,69 @@
+#site-navbar{
+    background-color: black;
+    color: white;
+}
+
+#site-navbar * {
+    color: inherit;
+}
+
+.image-container {
+    min-height: 322px;
+    max-height: 322px;
+}
+
+.responsive-img {
+    height: 322px;
+    object-fit: contain;
+}
+
+form input, textarea, lable {
+    width: 100%;
+    display: block;
+    margin-bottom: 8px;
+}
+
+form textarea {
+    resize: none;
+    min-height: 200px;
+}
+
+.form-area {
+    width: 50%;
+}
+
+.error {
+    color: red
+}
+
+.success {
+    color: green
+}
+
+.d-flex h5 {
+    margin-right: auto;
+}
+
+.fixed-side {
+    left: -90px !important; 
+    color: black !important;
+}
+
+.card-options a {
+    display: inline-block;
+    text-decoration: none;
+    padding: 6px;
+}
+
+.edit {
+    color: rgb(221, 163, 55) ;
+}
+
+.delete {
+    color: red;
+}
+
+body.darkMode {
+    background-color: black !important;
+    color: white !important;
+}
